@@ -23,20 +23,20 @@ public class Student {
     public void AddStudent(boolean add) {
 
         try {
-            DataOutputStream Dot = new DataOutputStream(new FileOutputStream("my_data.bin", true));
-            Dot.writeUTF(IdOfStudent);
-            Dot.writeUTF("_");
-            Dot.writeUTF(NameOfStudent);
+            FileOutputStream Dot = new FileOutputStream("my_data.bin", true);
+            Dot.write(IdOfStudent.getBytes());
+            Dot.write("_".getBytes());
+            Dot.write(NameOfStudent.getBytes());
             if (add) {
-                Dot.writeUTF("_");
+                Dot.write("_".getBytes());
                 for (String courses : this.courses) {
-                    Dot.writeUTF(courses);
+                    Dot.write(courses.getBytes());
                     if (!this.courses.getLast().equals(courses)) {
-                        Dot.writeUTF(",");
+                        Dot.write(",".getBytes());
                     }
                 }
             }
-            Dot.writeUTF("/");
+            Dot.write("/".getBytes());
             Dot.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -47,17 +47,18 @@ public class Student {
         ArrayList<String> data_file = new ArrayList<>();
 
         try {
-            DataInputStream IS = new DataInputStream(new FileInputStream("my_data.bin"));
-            String x;
+            FileInputStream IS = new FileInputStream("my_data.bin");
+            int x;
             StringBuilder builder = new StringBuilder();
-            while (IS.available() > 0) {
-                if (!(x = IS.readUTF()).equals("/")) {
-                    builder.append(x);
+            while (IS.available() != 0) {
+                if ((x = IS.read()) != '/' ) {
+                    builder.append((char) x);
                 } else {
                     data_file.add(builder.toString());
                     builder = new StringBuilder();
                 }
             }
+            IS.close();
             return data_file;
         } catch (Exception e) {
             System.out.println(e.getMessage());

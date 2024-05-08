@@ -34,21 +34,55 @@ public class Course {
     }
     public ArrayList<String> Enrolled_Courses(){
         ArrayList<String> Enrolled = new ArrayList<>();
+        try {
+            String Sub = "";
+            System.out.println("___________Courses___________");
+
             for(String sub : CoursesList()){
                 System.out.println(sub);
             }
             Scanner scan = new Scanner(System.in);
-                while (true) {
-                    String id = scan.nextLine();
 
-                        for (String line : CoursesList()) {
-                            String[] c_Id_Data = line.split(":");
-                                break;
-                            }
-                        }
-                            }
-                        }
+            while (true) {
+
+                System.out.print("Enter Subject Id Or exit: ");
+                String id = scan.nextLine();
+
+                if (id.equalsIgnoreCase("exit")) {
+                    break;
                 }
+
+
+                boolean idExist = false;
+                boolean SubEnrolled = false;
+
+                for (String line : CoursesList()) {
+                    String[] c_Id_Data = line.split(":");
+                    if (c_Id_Data.length > 1 && c_Id_Data[1].equals(id)) {
+                        idExist = true;
+                        if(Enrolled.contains(line)){
+                            SubEnrolled = true;
+                        }
+                        Sub = line;
+                        break;
+                    }
+
+                }
+
+                if(idExist){
+                    if(SubEnrolled){
+                        System.out.println("this subject is already exist");
+                    }else {
+                        Enrolled.add(Sub);
+                        System.out.println("Subject " + Sub + " has been added successfully.");
+                    }
+
+                }
+
+            }
+
+            System.out.println("All Subjects have been Added Successfully.");
+
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
         }

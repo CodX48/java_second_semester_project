@@ -1,11 +1,15 @@
+import java.awt.*;
 import java.util.Scanner;
+import Sys.DataTrans.*;
 import Sys.Std.*;
-import Sys.course.Course;
+import Sys.course.*;
 public class Main {
-    public static void main(String[] args) {
-
-        Display_menu();
-
+    public static void main(String[] args) throws Exception {
+        Student s = new Student();
+        DataTransfer Email;
+        Email = new Email();
+        //Display_menu();
+        Email.SendData(s.Search_student_from_IdOrName());
     }
     public static void Display_menu() {
         boolean addMore = true;
@@ -13,6 +17,7 @@ public class Main {
         String name;
         Course course = new Course();
         Student s;
+
         while (addMore) {
             try {
                 System.out.println("1-AddStudent");
@@ -44,11 +49,14 @@ public class Main {
                             break;
                         case 2:
                             while (true) {
+
                                 System.out.print("Enter the student name: ");
                                 name = scan.nextLine().trim();
                                 if ( name.matches("[a-zA-Z ]+") && name.contains(" ")) {
                                     s = new Student(name, course.Enrolled_Courses());
                                     s.AddStudent(true);
+
+
                                     break;
                                 }
                                 else {
@@ -86,5 +94,6 @@ public class Main {
             }
         }
         scan.close();
+
     }
 }
