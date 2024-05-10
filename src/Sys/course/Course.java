@@ -2,7 +2,7 @@ package Sys.course;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Course {
+public class Course  {
     private String NameOfCourse;
     private String Id;
 
@@ -20,7 +20,7 @@ public class Course {
         return   NameOfCourse+":"+Id;
     }
 
-    private ArrayList<String> CoursesList(){
+    public ArrayList<String> CoursesList(){
         ArrayList<String> CoursesList = new ArrayList<>();
         CoursesList.add(new Course("Programming II","1400121004").toString());
         CoursesList.add(new Course("Calculus II","1400121002").toString());
@@ -36,11 +36,7 @@ public class Course {
         ArrayList<String> Enrolled = new ArrayList<>();
         try {
             String Sub = "";
-            System.out.println("___________Courses___________");
 
-            for(String sub : CoursesList()){
-                System.out.println(sub);
-            }
             Scanner scan = new Scanner(System.in);
 
             while (true) {

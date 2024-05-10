@@ -1,12 +1,11 @@
 package Sys.Std;
+import Sys.course.Course;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
-public class Student {
+public class Student extends Course{
     private String NameOfStudent;
-    private static String IdOfStudent = "1000";
+    private  String IdOfStudent = "1000";
     private ArrayList<String> courses;
 
     public Student() {}
@@ -66,20 +65,23 @@ public class Student {
         return data_file;
     }
     private void IncreaseId(ArrayList<String> File_data) {
-        int[] Ids = new int[File_data.size()];
+        ArrayList<String> Ids = new ArrayList<>();
         int x = 0;
+
         try {
 
             while (x < File_data.size()) {
                 String line = File_data.get(x);
                 String[] data = line.split("_");
-                Ids[x] = Integer.parseInt(data[0]);
+                Ids.add(data[0]);
                 x++;
             }
             x = 0;
-            while (x < Ids.length) {
-                if (Integer.parseInt(IdOfStudent) >= Ids[x]) {
-                    IdOfStudent = String.valueOf(Ids[x] + 1);
+            while (x < Ids.size()) {
+                 int tempId = (Integer.parseInt(IdOfStudent) + x+1);
+                if(!(Ids.contains(String.valueOf(tempId)))){
+                    IdOfStudent = String.valueOf(tempId);
+                    break;
                 }
                 x++;
             }
@@ -92,14 +94,14 @@ public class Student {
         int x = 0;
         Scanner scan = new Scanner(System.in);
 
-        if (!(Display_info().isEmpty())) {
+
 
             System.out.println("________________Our List Of Student________________");
             for (String student : Display_info()){
                 System.out.println(student);
             }
 
-            System.out.println("________________Please Entre The Id Or Full Name To Search For Student________________");
+            System.out.println("________________Please Entre The Id Or Full Name________________");
             String Out = scan.nextLine();
 
             boolean exist = false;
@@ -136,90 +138,160 @@ public class Student {
                 return "This Student Does Not Exist In The System.";
             }
 
-        }else {
-            return "There Is No Any Students In the System.";
-        }
+
         return "";
     }
-    public void Delete_student_from_IdOrName() {
+    public void Delete_student_from_Id(String Id) {
         int x = 0;
-        if (!(Display_info().isEmpty())) {
 
         ArrayList<String> NewList = Display_info();
-        Scanner scan = new Scanner(System.in);
-
-
-            for (String student : Display_info()){
-                System.out.println(student);
-            }
 
             try {
-                System.out.println("________________Please Entre The Id For Delete Student________________");
-                String Id = scan.nextLine();
+
                 while (x < NewList.size()) {
                     String line = NewList.get(x);
                     String[] info = line.split("_");
                     if (Id.equals(info[0])) {
-                        System.out.println("Student With [name: " + info[1] + ", Id: " + info[0] + "]" + " is out of the System");
                         NewList.remove(x);
                         break;
                     }
                     x++;
                 }
-
                 x = 0;
-                DataOutputStream Dot = new DataOutputStream(new FileOutputStream("my_data.bin"));
+                FileOutputStream Dot = new FileOutputStream("my_data.bin");
                 while (x < NewList.size()) {
-                    Dot.writeUTF(NewList.get(x));
-                    Dot.writeUTF("/");
+                    Dot.write(NewList.get(x).getBytes());
+                    Dot.write("/".getBytes());
                     x++;
                 }
                 Dot.close();
-                System.out.println("________________Our New List Of Student________________");
-                Display_All_StudentsNames();
 
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-        }else {
-            System.out.println("there is no any Students in the system to Delete .");
-        }
+
     }
     public void Display_All_StudentsNames() {
-        if (!(Display_info().isEmpty())) {
+
 
             ArrayList<String> StdInfo = Display_info();
             int x = 0;
             System.out.println("_________________Our Students_________________");
             while (x < StdInfo.size()) {
                 String[] line = StdInfo.get(x).split("_");
-                System.out.println((x + 1) + "- " + line[1]);
+                System.out.println(line[0] + "_" + line[1]);
                 x++;
             }
-        } else {
-            System.out.println("there is no any Students in the system.");
-        }
-    }
-    public void Display_All_Student_Courses() {
 
-        if (!(Display_info().isEmpty())) {
+    }
+    public String Display_All_Student_Courses() {
+
+
 
             String[] line = Search_student_from_IdOrName().split("_");
             if(line.length <= 2){
-                System.out.println("this Student does not have any Enrolled Subject.");
+                return "this Student does not have any Enrolled Subject.";
             }else {
-                System.out.println("Student Name: " + line[1] + ", Student Id: " + line[0] + "\nStudent's Courses:");
-                String[] SubLines = line[2].split(",");
-                for (String C : SubLines) {
-                    String[] Course = C.split(":");
-                    System.out.println("Subject: " + Course[0] + ", With ID: " + Course[1]);
-                }
+                return line[2];
             }
 
-        } else {
-            System.out.println("there is no any Students in the system. ");
-        }
+
 
     }
+
+    public void UpdateStudent(){
+
+            ArrayList<String> Sub = new ArrayList<>();
+
+            String line = Search_student_from_IdOrName();
+            String[] Data = line.split("_");
+            if(Data.length == 3){ //that means he enrolled subjects
+                String[] Subjects = Data[2].split(",");
+                String [] name = Data[1].split(" ");
+                System.out.println(name[0] +"'s Subject:");
+                for(String S: Subjects){
+                    Sub.add(S);
+                    System.out.println(S);
+                }
+                System.out.println("__________________________________");
+                boolean update = true;
+                Scanner scanner = new Scanner(System.in);
+
+                while (update){
+                    System.out.println("1-Add Subject.");
+                    System.out.println("2-Remove a Subject.");
+                    System.out.println("3-Remove All Subjects.");
+                    System.out.println("4-Exit.");
+
+                    System.out.print("Enter: ");
+                    String x = scanner.nextLine();
+                    switch (x){
+                        case "1":
+                            Delete_student_from_Id(Data[0]);
+                            Sub.addAll(add_new_Sub(Sub));
+
+                            this.NameOfStudent = Data[1];
+                            this.IdOfStudent = Data[0];
+                            this.courses = Sub;
+                            AddStudent(!courses.isEmpty());
+                            break;
+                        case "2":
+                            Delete_student_from_Id(Data[0]);
+                            Scanner scan = new Scanner(System.in);
+                            System.out.print("Please Enter the Subject_Id For Delete From The List Above: ");
+                            String C_ID = scan.nextLine();
+                            for (String OneC : Sub){
+                                String[] parse_Sub = OneC.split(":");
+                                if(parse_Sub[1].equals(C_ID)){
+                                    Sub.remove(OneC);
+                                    break;
+                                }
+                            }
+                            System.out.println("The Subject Successfully Removed.");
+                            this.NameOfStudent = Data[1];
+                            this.IdOfStudent = Data[0];
+                            this.courses = Sub;
+                            AddStudent(!courses.isEmpty());
+                            break;
+                        case "3":
+                            Sub.clear();
+                            Delete_student_from_Id(Data[0]);
+                            this.NameOfStudent = Data[1];
+                            this.IdOfStudent = Data[0];
+                            AddStudent(!Sub.isEmpty());
+                            System.out.println("All subject Have been Removed Successfully.");
+                            break;
+                        case "4":
+                            update = false;
+                            break;
+                        default:
+                            System.out.println("Enter a valid Number (1 : 4 ). ");
+                    }
+                }
+
+            }else {
+                System.out.println("Please Enroll Some Subjects First.");
+            }
+
+    }
+
+
+    private ArrayList<String> add_new_Sub(ArrayList<String> Student_Subjects){
+        Course course = new Course();
+        System.out.println("Subjects Could Be Enrolled: ");
+
+        for (String sub : course.CoursesList()){
+            if(!(Student_Subjects).contains(sub)){
+                System.out.println(sub);
+            }
+        }
+        return course.Enrolled_Courses();
+    }
+
+    public boolean Sys_Empty(){
+        return !Display_info().isEmpty();
+    }
+
+
 }
 
