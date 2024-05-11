@@ -94,11 +94,10 @@ public class Student extends Course{
         int x = 0;
         Scanner scan = new Scanner(System.in);
 
-
-
             System.out.println("________________Our List Of Student________________");
             for (String student : Display_info()){
-                System.out.println(student);
+                String[] Name_Id = student.split("_");
+                System.out.println(Name_Id[0] + " : " + Name_Id[1]);
             }
 
             System.out.println("________________Please Entre The Id Or Full Name________________");
@@ -143,11 +142,8 @@ public class Student extends Course{
     }
     public void Delete_student_from_Id(String Id) {
         int x = 0;
-
         ArrayList<String> NewList = Display_info();
-
             try {
-
                 while (x < NewList.size()) {
                     String line = NewList.get(x);
                     String[] info = line.split("_");
@@ -173,20 +169,17 @@ public class Student extends Course{
     }
     public void Display_All_StudentsNames() {
 
-
             ArrayList<String> StdInfo = Display_info();
             int x = 0;
             System.out.println("_________________Our Students_________________");
             while (x < StdInfo.size()) {
                 String[] line = StdInfo.get(x).split("_");
-                System.out.println(line[0] + "_" + line[1]);
+                System.out.println(line[1]);
                 x++;
             }
 
     }
     public String Display_All_Student_Courses() {
-
-
 
             String[] line = Search_student_from_IdOrName().split("_");
             if(line.length <= 2){
@@ -194,9 +187,6 @@ public class Student extends Course{
             }else {
                 return line[2];
             }
-
-
-
     }
 
     public void UpdateStudent(){
@@ -206,13 +196,16 @@ public class Student extends Course{
             String line = Search_student_from_IdOrName();
             String[] Data = line.split("_");
             if(Data.length == 3){ //that means he enrolled subjects
+
                 String[] Subjects = Data[2].split(",");
                 String [] name = Data[1].split(" ");
+
                 System.out.println(name[0] +"'s Subject:");
                 for(String S: Subjects){
                     Sub.add(S);
                     System.out.println(S);
                 }
+
                 System.out.println("__________________________________");
                 boolean update = true;
                 Scanner scanner = new Scanner(System.in);
@@ -229,7 +222,6 @@ public class Student extends Course{
                         case "1":
                             Delete_student_from_Id(Data[0]);
                             Sub.addAll(add_new_Sub(Sub));
-
                             this.NameOfStudent = Data[1];
                             this.IdOfStudent = Data[0];
                             this.courses = Sub;
@@ -267,10 +259,19 @@ public class Student extends Course{
                         default:
                             System.out.println("Enter a valid Number (1 : 4 ). ");
                     }
+                    System.out.println("Information Updated Successfully ;)");
                 }
 
             }else {
                 System.out.println("Please Enroll Some Subjects First.");
+                System.out.println("__________________________________");
+                Delete_student_from_Id(Data[0]);
+                Sub.addAll(add_new_Sub(Sub));
+                this.NameOfStudent = Data[1];
+                this.IdOfStudent = Data[0];
+                this.courses = Sub;
+                AddStudent(!courses.isEmpty());
+                System.out.println("Information Updated Successfully ;)");
             }
 
     }

@@ -24,7 +24,7 @@ public class ToFile extends DataTransfer {
                 String[] subject = line[2].split(",");
                 StringBuilder Mes = new StringBuilder();
                 Mes.append("<html><body><font size=\"3\">");
-                Mes.append("<p>Hello, ").append(line[1].toUpperCase()).append("<p/>\n\nYour Subject For This Semester :<br>");
+                Mes.append("<p>Hello, ").append(line[1].toUpperCase()).append("<p/>\n\nThe Is All Your Information :<br>");
                 Mes.append("Have a Nice Day ;)");
                 Mes.append("<font/><body/><html/>");
                 try {
@@ -44,7 +44,7 @@ public class ToFile extends DataTransfer {
                 Session session = Session.getInstance(prop, new Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication("example@gmail.com", "***************");
+                        return new PasswordAuthentication("example@gmail.com", "************");
                     }
                 });
                 Scanner scanner = new Scanner(System.in);

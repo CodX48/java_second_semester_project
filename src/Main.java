@@ -73,7 +73,14 @@ public class Main {
                         case "3":
                             s = new Student();
                             if(s.Sys_Empty()){
-                                System.out.println(s.Search_student_from_IdOrName());
+                                String Student = s.Search_student_from_IdOrName();
+                                String[] StudentInfo = Student.split("_");
+                                String[] StudentSub = StudentInfo[2].split(",");
+                                System.out.println("Student Name: " + StudentInfo[1].toUpperCase() + ", Student Id: " + StudentInfo[0]);
+                                System.out.println("\nStudent Subjects: ");
+                                for(String SInfo: StudentSub){
+                                    System.out.println(SInfo);
+                                }
                             }else{
                                 System.out.println("There is no Any Students on the System");
                             }
@@ -82,10 +89,8 @@ public class Main {
                         case "4":
                             s = new Student();
                             if(s.Sys_Empty()){
-                                s.Display_All_StudentsNames();
-                                System.out.println("Enter The student's Id: ");
-                                String id = scan.nextLine();
-                                s.Delete_student_from_Id(id);
+                                String[] id = s.Search_student_from_IdOrName().split("_");
+                                s.Delete_student_from_Id(id[0]);
                                 System.out.println("Deleted Successfully. ");
                             }else{
                                 System.out.println("There is no Any Students on the System");
