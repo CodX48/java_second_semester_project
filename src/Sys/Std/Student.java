@@ -7,6 +7,7 @@ public class Student extends Course{
     private String NameOfStudent;
     private  String IdOfStudent = "1000";
     private ArrayList<String> courses;
+    private String StudentGmail = "EmptyG";
 
     public Student() {}
 
@@ -19,6 +20,9 @@ public class Student extends Course{
         this.NameOfStudent = nameOfStudent;
         IncreaseId(Objects.requireNonNull(Display_info()));
     }
+
+    public void SetGmail(String Mail){this.StudentGmail = Mail;}
+    public void SetId(String id){this.IdOfStudent = id;}
     public void AddStudent(boolean add) {
 
         try {
@@ -35,6 +39,8 @@ public class Student extends Course{
                     }
                 }
             }
+            Dot.write("_".getBytes());
+            Dot.write(StudentGmail.getBytes());
             Dot.write("/".getBytes());
             Dot.close();
         } catch (Exception e) {
@@ -182,7 +188,7 @@ public class Student extends Course{
     public String Display_All_Student_Courses() {
 
             String[] line = Search_student_from_IdOrName().split("_");
-            if(line.length <= 2){
+            if(line.length <= 3){
                 return "this Student does not have any Enrolled Subject.";
             }else {
                 return line[2];
@@ -195,12 +201,12 @@ public class Student extends Course{
 
             String line = Search_student_from_IdOrName();
             String[] Data = line.split("_");
-            if(Data.length == 3){ //that means he enrolled subjects
+            if(Data.length <= 4 ){ //that means he enrolled subjects
 
                 String[] Subjects = Data[2].split(",");
                 String [] name = Data[1].split(" ");
 
-                System.out.println(name[0] +"'s Subject:");
+                System.out.println(name[0] +"'s Subject: ");
                 for(String S: Subjects){
                     Sub.add(S);
                     System.out.println(S);
