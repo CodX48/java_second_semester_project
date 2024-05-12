@@ -11,9 +11,7 @@ public class Course  {
         this.Id = IdOfCourse;
     }
 
-    public Course(){
-
-    }
+    public Course(){}
 
     @Override
     public String toString(){

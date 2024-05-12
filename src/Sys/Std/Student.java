@@ -3,7 +3,7 @@ import Sys.course.Course;
 import java.io.*;
 import java.util.*;
 
-public class Student extends Course{
+public class Student{
     private String NameOfStudent;
     private  String IdOfStudent = "1000";
     private ArrayList<String> courses;
