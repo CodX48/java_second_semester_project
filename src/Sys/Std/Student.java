@@ -21,8 +21,6 @@ public class Student extends Course{
         IncreaseId(Objects.requireNonNull(Display_info()));
     }
 
-    public void SetGmail(String Mail){this.StudentGmail = Mail;}
-    public void SetId(String id){this.IdOfStudent = id;}
     public void AddStudent(boolean add) {
 
         try {
@@ -74,26 +72,31 @@ public class Student extends Course{
         ArrayList<String> Ids = new ArrayList<>();
         int x = 0;
 
-        try {
+        if(!(NameOfStudent.equals("yasine mostafa"))){
+            try {
 
-            while (x < File_data.size()) {
-                String line = File_data.get(x);
-                String[] data = line.split("_");
-                Ids.add(data[0]);
-                x++;
-            }
-            x = 0;
-            while (x < Ids.size()) {
-                 int tempId = (Integer.parseInt(IdOfStudent) + x+1);
-                if(!(Ids.contains(String.valueOf(tempId)))){
-                    IdOfStudent = String.valueOf(tempId);
-                    break;
+                while (x < File_data.size()) {
+                    String line = File_data.get(x);
+                    String[] data = line.split("_");
+                    Ids.add(data[0]);
+                    x++;
                 }
-                x++;
+                x = 0;
+                while (x < Ids.size()) {
+                    int tempId = (Integer.parseInt(IdOfStudent) + x+1);
+                    if(!(Ids.contains(String.valueOf(tempId)))){
+                        IdOfStudent = String.valueOf(tempId);
+                        break;
+                    }
+                    x++;
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        }else {
+            IdOfStudent = "0913002160";
         }
+
 
     }
     public String Search_student_from_IdOrName() {
