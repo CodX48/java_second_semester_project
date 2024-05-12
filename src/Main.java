@@ -30,7 +30,8 @@ public class Main {
                 System.out.println("6-Display_All_StudentCourses");
                 System.out.println("7-Send Data throw Student Gmail");
                 System.out.println("8-Update student information");
-                System.out.println("9-Exit.");
+                System.out.println("9-Update student Gmail");
+                System.out.println("10-Exit.");
                 System.out.print("Enter: ");
 
                 if (scan.hasNextLine()) {
@@ -157,6 +158,14 @@ public class Main {
                             }
                             break;
                         case "9":
+                            s = new Student();
+                            if(s.Sys_Empty()){
+                                s.UpdateGmailInformation(s.Search_student_from_IdOrName());
+                            }else{
+                                System.out.println("There is no Any Students on the System");
+                            }
+                            break;
+                        case "10":
                             addMore = false;
                             break;
                     }

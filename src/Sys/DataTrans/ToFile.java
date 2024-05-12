@@ -44,27 +44,22 @@ public class ToFile extends DataTransfer {
                 Session session = Session.getInstance(prop, new Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication("codx207@gmail.com", "sytn xmji bnon pmls");
+                        return new PasswordAuthentication("example@gmail.com", "***********");
                     }
                 });
 
                 try {
+
                     String temp;
                     if(line.length >= 4 && !(line[3].equals("EmptyG"))){
                         temp = line[3];
                     }else {
-                        Scanner scanner = new Scanner(System.in);
-                        System.out.print("Hello, " + line[1] + "\nPlease Enter your Gmail: ");
-                        temp = scanner.nextLine();
-                        ArrayList<String> Course = new ArrayList<>(List.of(subject));
-                        Student s = new Student(line[1], Course);
-                        s.Delete_student_from_Id(line[0]);
-                        s.SetId(line[0]);
-                        s.SetGmail(temp);
-                        s.AddStudent(true);
+                        Student s = new Student();
+                        temp = s.UpdateGmailInformation(data);
                     }
+
                     Message message = new MimeMessage(session);
-                    message.setFrom(new InternetAddress("codx207@gmail.com"));
+                    message.setFrom(new InternetAddress("example@gmail.com"));
                     message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(temp));
                     message.setSubject("Your Subject Of This Semester");
 

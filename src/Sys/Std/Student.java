@@ -201,7 +201,7 @@ public class Student extends Course{
 
             String line = Search_student_from_IdOrName();
             String[] Data = line.split("_");
-            if(Data.length <= 4 ){ //that means he enrolled subjects
+            if(Data.length <= 3 && !Data[2].equals("EmptyG")){ //that means he enrolled subjects
 
                 String[] Subjects = Data[2].split(",");
                 String [] name = Data[1].split(" ");
@@ -280,6 +280,22 @@ public class Student extends Course{
                 System.out.println("Information Updated Successfully ;)");
             }
 
+    }
+
+    public String UpdateGmailInformation(String data){
+        String temp;
+        String[] line = data.split("_");
+        String[] subject = line[2].split(",");
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Hello, " + line[1] + "\nPlease Enter your Gmail: ");
+        temp = scanner.nextLine();
+        Delete_student_from_Id(line[0]);
+        NameOfStudent = line[1];
+        IdOfStudent = line[0];
+        StudentGmail = temp;
+        courses = new ArrayList<>(List.of(subject));
+        AddStudent(true);
+        return temp;
     }
 
 
