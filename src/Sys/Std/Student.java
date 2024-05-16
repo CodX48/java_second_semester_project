@@ -13,50 +13,88 @@ public class Student{
     public Student(String nameOfStudent, ArrayList<String> courses) {
         this.NameOfStudent = nameOfStudent;
         this.courses = courses;
-        IncreaseId(Objects.requireNonNull(Display_info()));
+        IncreaseId();
     }
     public Student(String nameOfStudent) {
         this.NameOfStudent = nameOfStudent;
-        IncreaseId(Objects.requireNonNull(Display_info()));
+        IncreaseId();
     }
     public void AddStudent(boolean add) {
 
         try {
-            FileOutputStream Dot = new FileOutputStream("my_data.bin", true);
+            FileOutputStream Dot = new FileOutputStream("my_data.bin",true);
+            //Id
             Dot.write(IdOfStudent.getBytes());
-            Dot.write("_".getBytes());
+            //StudentNameLength
+            WriteInBigEndianNotation(Dot,NameOfStudent.length());
             Dot.write(NameOfStudent.getBytes());
+            if(courses != null){
+                Dot.write(String.valueOf(courses.size()).getBytes());
+            }else {
+                Dot.write("0".getBytes());
+            }
             if (add) {
-                Dot.write("_".getBytes());
-                for (String courses : this.courses) {
-                    Dot.write(courses.getBytes());
-                    if (!this.courses.getLast().equals(courses)) {
-                        Dot.write(",".getBytes());
-                    }
+                for(String s : courses){
+                    String[] SubInfo = s.split(":");
+                    WriteInBigEndianNotation(Dot,SubInfo[0].length());
+                    Dot.write(SubInfo[0].getBytes());
+                    Dot.write(SubInfo[1].getBytes());
                 }
             }
-            Dot.write("/".getBytes());
             Dot.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
     }
-    private ArrayList<String> Display_info() {
-        ArrayList<String> data_file = new ArrayList<>();
 
+    private static void WriteInBigEndianNotation(OutputStream f, int value) throws Exception{
+        f.write(value >> 24);
+        f.write(value >> 16);
+        f.write(value >> 8);
+        f.write(value);
+    }
+
+
+    public ArrayList<String> Display_info() {
+        ArrayList<String> data_file = new ArrayList<>();
         try {
             FileInputStream IS = new FileInputStream("my_data.bin");
-            int x;
-            StringBuilder builder = new StringBuilder();
-            while (IS.available() != 0) {
-                if ((x = IS.read()) != '/' ) {
-                    builder.append((char) x);
-                } else {
-                    data_file.add(builder.toString());
-                    builder = new StringBuilder();
+            while (IS.available() > 0){
+                StringBuilder BuildStudent = new StringBuilder();
+                //Id
+                byte[] IdBytes = new byte[4];
+                IS.read(IdBytes);
+                String id = new String(IdBytes);
+                //name
+                byte[] NameBytes = new byte[ReadSizeOfNextString(IS)];
+                IS.read(NameBytes);
+                String name = new String(NameBytes);
+                BuildStudent.append(id).append("_").append(name);
+                //Courses
+                //NumOfCourses
+                int numofc;
+                if( (numofc = IS.read()) != '0'){
+                    BuildStudent.append("_");
+                    for(int i = Integer.parseInt(String.valueOf((char)numofc)); i > 0 ; i--){
+                        byte[] CoursesBytes = new byte[ReadSizeOfNextString(IS)];
+                        IS.read(CoursesBytes);
+                        BuildStudent.append(new String(CoursesBytes)).append(":");
+
+                        byte[] IdCoursesBytes = new byte[10];
+                        IS.read(IdCoursesBytes);
+                        if(i-1 != 0){
+                            BuildStudent.append(new String(IdCoursesBytes)).append(",");
+                        }else {
+                            BuildStudent.append(new String(IdCoursesBytes));
+                        }
+
+                    }
                 }
+
+                data_file.add(BuildStudent.toString());
             }
+
             IS.close();
             return data_file;
         } catch (Exception e) {
@@ -64,14 +102,23 @@ public class Student{
         }
         return data_file;
     }
-    private void IncreaseId(ArrayList<String> File_data) {
+
+    private static int ReadSizeOfNextString(InputStream f)throws Exception{
+        int byte1 = f.read();
+        int byte2 = f.read();
+        int byte3 = f.read();
+        int byte4 = f.read();
+        return (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
+    }
+
+    private void IncreaseId() {
         ArrayList<String> Ids = new ArrayList<>();
         int x = 0;
 
         try {
 
-            while (x < File_data.size()) {
-                String line = File_data.get(x);
+            while (x < Display_info().size()) {
+                String line = Display_info().get(x);
                 String[] data = line.split("_");
                 Ids.add(data[0]);
                 x++;
@@ -90,56 +137,60 @@ public class Student{
         }
 
     }
-    public String Search_student_from_IdOrName() {
+    public String searchStudentFromIdOrName() {
         int x = 0;
-        Scanner scan = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
-            System.out.println("________________Our List Of Student________________");
-            for (String student : Display_info()){
-                String[] Name_Id = student.split("_");
-                System.out.println(Name_Id[0] + " : " + Name_Id[1]);
+        System.out.println("________________Our List Of Student________________");
+        for (String student : Display_info()) {
+            String[] nameId = student.split("_");
+            System.out.println(nameId[0] + " : " + nameId[1]);
+        }
+
+        System.out.println("________________Please Enter The Id Or Full Name________________");
+        String out = scanner.nextLine();
+
+        boolean exist = false;
+        for (String ex : Display_info()) {
+            String[] data = ex.split("_");
+            if (data[0].equals(out) || data[1].equals(out)) {
+                exist = true;
+                break;
             }
+        }
 
-            System.out.println("________________Please Entre The Id Or Full Name________________");
-            String Out = scan.nextLine();
-
-            boolean exist = false;
-            for (String ex : Display_info()) {
-                String[] data = ex.split("_");
-                if (data[0].equals(Out) || data[1].equals(Out)) {
-                    exist = true;
-                    break;
+        if (exist) {
+            try {
+                int id = Integer.parseInt(out);
+                while (x < Display_info().size()) {
+                    String line = Display_info().get(x);
+                    String[] info = line.split("_");
+                    if (id == Integer.parseInt(info[0])) {
+                       // scan.close(); // Close scanner here
+                        return line;
+                    }
+                    x++;
+                }
+            } catch (Exception e) {
+                while (x < Display_info().size()) {
+                    String line = Display_info().get(x);
+                    String[] info = line.split("_");
+                    if (Objects.equals(out, info[1])) {
+                       // scan.close(); // Close scanner here
+                        return line;
+                    }
+                    x++;
                 }
             }
+        } else {
+           // scan.close(); // Close scanner here
+            return "This Student Does Not Exist In The System.";
+        }
 
-            if (exist) {
-                try {
-                    int Id = Integer.parseInt(Out);
-                    while (x < Display_info().size()) {
-                        String line = Display_info().get(x);
-                        String[] info = line.split("_");
-                        if (Id == Integer.parseInt(info[0])) {
-                            return line;
-                        }
-                        x++;
-                    }
-                } catch (Exception e) {
-                    while (x < Display_info().size()) {
-                        String line = Display_info().get(x);
-                        String[] info = line.split("_");
-                        if (Objects.equals(Out, info[1])) {
-                            return line;
-                        }
-                        x++;
-                    }
-                }
-            } else {
-                return "This Student Does Not Exist In The System.";
-            }
-
-
+        //scan.close(); // Close scanner here
         return "";
     }
+
     public void Delete_student_from_Id(String Id) {
         int x = 0;
         ArrayList<String> NewList = Display_info();
@@ -156,8 +207,25 @@ public class Student{
                 x = 0;
                 FileOutputStream Dot = new FileOutputStream("my_data.bin");
                 while (x < NewList.size()) {
-                    Dot.write(NewList.get(x).getBytes());
-                    Dot.write("/".getBytes());
+
+                    String[] line = NewList.get(x).split("_");
+
+                    Dot.write(line[0].getBytes());
+                    WriteInBigEndianNotation(Dot,line[1].length());
+                    Dot.write(line[1].getBytes());
+
+                    if(line.length>2){
+                        String[] Sub = line[2].split(",");
+                        Dot.write(String.valueOf(Sub.length).getBytes());
+                        for(String C : Sub){
+                            String[] c = C.split(":");
+                            WriteInBigEndianNotation(Dot,c[0].length());
+                            Dot.write(c[0].getBytes());
+                            Dot.write(c[1].getBytes());
+                        }
+                    }else {
+                        Dot.write("0".getBytes());
+                    }
                     x++;
                 }
                 Dot.close();
@@ -181,7 +249,7 @@ public class Student{
     }
     public String Display_All_Student_Courses() {
 
-            String[] line = Search_student_from_IdOrName().split("_");
+            String[] line = searchStudentFromIdOrName().split("_");
             if(line.length <= 2){
                 return "this Student does not have any Enrolled Subject.";
             }else {
@@ -193,7 +261,7 @@ public class Student{
 
             ArrayList<String> Sub = new ArrayList<>();
 
-            String line = Search_student_from_IdOrName();
+            String line = searchStudentFromIdOrName();
             String[] Data = line.split("_");
             if(Data.length == 3){ //that means he enrolled subjects
 

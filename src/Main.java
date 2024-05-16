@@ -6,21 +6,18 @@ public class Main {
 
 
     public static void main(String[] args) {
-
         Display_menu();
-
     }
 
 
     public static void Display_menu() {
-        Scanner scan = new Scanner(System.in);
         boolean addMore = true;
         String name;
-
         Student s;
         Course course = new Course();
 
         while (addMore) {
+            Scanner scan = new Scanner(System.in);
             try {
                 System.out.println("1-AddStudent");
                 System.out.println("2-AddStudent And enroll Subjects");
@@ -35,6 +32,7 @@ public class Main {
 
                 if (scan.hasNextLine()) {
                     String x = scan.nextLine();
+
                     switch (x) {
                         case "1":
                             while (true) {
@@ -43,6 +41,7 @@ public class Main {
                                 if (name.matches("[a-zA-Z ]+") && name.contains(" ")) {
                                     s = new Student(name);
                                     s.AddStudent(false);
+
                                     break;
                                 }
                                 else {
@@ -63,6 +62,7 @@ public class Main {
                                     }
                                     s = new Student(name, course.Enrolled_Courses());
                                     s.AddStudent(true);
+
                                     break;
                                 }
                                 else {
@@ -73,7 +73,7 @@ public class Main {
                         case "3":
                             s = new Student();
                             if(s.Sys_Empty()){
-                                String Student = s.Search_student_from_IdOrName();
+                                String Student = s.searchStudentFromIdOrName();
                                 String[] StudentInfo = Student.split("_");
                                 String[] StudentSub = StudentInfo[2].split(",");
                                 System.out.println("Student Name: " + StudentInfo[1].toUpperCase() + ", Student Id: " + StudentInfo[0]);
@@ -84,12 +84,11 @@ public class Main {
                             }else{
                                 System.out.println("There is no Any Students on the System");
                             }
-
                             break;
                         case "4":
                             s = new Student();
                             if(s.Sys_Empty()){
-                                String[] id = s.Search_student_from_IdOrName().split("_");
+                                String[] id = s.searchStudentFromIdOrName().split("_");
                                 s.Delete_student_from_Id(id[0]);
                                 System.out.println("Deleted Successfully. ");
                             }else{
@@ -131,12 +130,12 @@ public class Main {
                                     switch (scanner.nextLine()) {
                                         case "1":
                                             Transfer = new ToFile();
-                                            Transfer.SendData(s.Search_student_from_IdOrName());
+                                            Transfer.SendData(s.searchStudentFromIdOrName());
                                             valid = false;
                                             break;
                                         case "2":
                                             Transfer = new Email();
-                                            Transfer.SendData(s.Search_student_from_IdOrName());
+                                            Transfer.SendData(s.searchStudentFromIdOrName());
                                             valid = false;
                                             break;
                                         default:
@@ -164,9 +163,10 @@ public class Main {
 
                 }
             } catch (Exception e) {
-                System.out.println("Invalid input. Please enter a number between 1 and 7.");
+                System.out.println("Invalid input. Please enter a number between 1 and 9.");
 
             }
+
         }
 
     }
