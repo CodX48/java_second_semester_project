@@ -21,7 +21,7 @@ public class ToFile extends DataTransfer {
 
             if (line.length == 3) {
 
-                String[] subject = line[2].split(",");
+                String[] subject = line[2].split(":");
                 StringBuilder Mes = new StringBuilder();
                 Mes.append("<html><body><font size=\"3\">");
                 Mes.append("<p>Hello, ").append(line[1].toUpperCase()).append("<p/>\n\nThe Is All Your Information :<br>");
@@ -44,7 +44,7 @@ public class ToFile extends DataTransfer {
                 Session session = Session.getInstance(prop, new Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication("example@gmail.com", "************");
+                        return new PasswordAuthentication("codx207@gmail.com", "sytn xmji bnon pmls");
                     }
                 });
                 Scanner scanner = new Scanner(System.in);
@@ -54,7 +54,7 @@ public class ToFile extends DataTransfer {
 
 
                     Message message = new MimeMessage(session);
-                    message.setFrom(new InternetAddress("example@gmail.com"));
+                    message.setFrom(new InternetAddress("codx207@gmail.com"));
                     message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(temp));
                     message.setSubject("Your Subject Of This Semester");
 
@@ -88,9 +88,9 @@ public class ToFile extends DataTransfer {
         file.println("Student Name: " + line[1]);
         file.println("Student Id: " + line[0]);
         file.println("Student Subject: ");
-        for (String Sub : subject){
-            String[] Sub_info = Sub.split(":");
-            file.println(Sub_info[0] + ", Id: " + Sub_info[1]);
+
+        for(int i = 0 ; i < subject.length ; i+=2){
+            file.println(subject[i] + ", Id:" + subject[i+1]);
         }
         return file;
     }

@@ -5,16 +5,15 @@ import Sys.course.*;
 public class Main {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         Display_menu();
     }
 
-
-    public static void Display_menu() {
+    public static void Display_menu(){
         boolean addMore = true;
         String name;
         Student s;
-        Course course = new Course();
+        Course course;
 
         while (addMore) {
             Scanner scan = new Scanner(System.in);
@@ -52,7 +51,7 @@ public class Main {
                             break;
                         case "2":
                             while (true) {
-
+                                course = new Course();
                                 System.out.print("Enter the student name: ");
                                 name = scan.nextLine().trim();
                                 if ( name.matches("[a-zA-Z ]+") && name.contains(" ")) {
@@ -72,54 +71,48 @@ public class Main {
                             break;
                         case "3":
                             s = new Student();
-                            if(s.Sys_Empty()){
+                           s.Sys_Empty();
                                 String Student = s.searchStudentFromIdOrName();
-                                String[] StudentInfo = Student.split("_");
+                                    String[] StudentInfo = Student.split("_");
+
+                            try{
                                 String[] StudentSub = StudentInfo[2].split(",");
                                 System.out.println("Student Name: " + StudentInfo[1].toUpperCase() + ", Student Id: " + StudentInfo[0]);
                                 System.out.println("\nStudent Subjects: ");
                                 for(String SInfo: StudentSub){
                                     System.out.println(SInfo);
                                 }
-                            }else{
-                                System.out.println("There is no Any Students on the System");
+                            }catch (Exception e){
+                                System.out.println("Student Name: " + StudentInfo[1].toUpperCase() + ", Student Id: " + StudentInfo[0]);
                             }
+
                             break;
                         case "4":
-                            s = new Student();
-                            if(s.Sys_Empty()){
+                                s = new Student();
+                                s.Sys_Empty();
                                 String[] id = s.searchStudentFromIdOrName().split("_");
                                 s.Delete_student_from_Id(id[0]);
                                 System.out.println("Deleted Successfully. ");
-                            }else{
-                                System.out.println("There is no Any Students on the System");
-                            }
-
                             break;
                         case "5":
-                            s = new Student();
-                            if(s.Sys_Empty()){
-                                s.Display_All_StudentsNames();
-                            }else{
-                                System.out.println("There is no Any Students on the System");
-                            }
+                                 s = new Student();
+                                 s.Sys_Empty();
+                                 s.Display_All_StudentsNames();
                             break;
                         case "6":
                             s = new Student();
-                            if(s.Sys_Empty()){
-                                String[] Sub =  s.Display_All_Student_Courses().split(",");
+                           s.Sys_Empty();
+                                String[] Sub =  s.Display_All_Student_Courses().split(":");
                                 System.out.println("Student's Subject: ");
-                                for (String C : Sub){
-                                    System.out.println(C);
-                                }
 
-                            }else{
-                                System.out.println("There is no Any Students on the System");
+                            for(int i = 0 ; i < Sub.length ; i+=2){
+                                System.out.println(Sub[i] + ":" + Sub[i+1]);
                             }
+
                             break;
                         case "7":
-                            s = new Student();
-                            if(s.Sys_Empty()){
+                               s = new Student();
+                               s.Sys_Empty();
                                 DataTransfer Transfer;
                                 boolean valid = true;
                                 while (valid) {
@@ -142,18 +135,11 @@ public class Main {
                                             System.out.println("Please Enter a valid Option. ");
                                     }
                                 }
-
-                            }else{
-                                System.out.println("There is no Any Students on the System");
-                            }
                             break;
                         case "8":
                             s = new Student();
-                            if(s.Sys_Empty()){
+                           s.Sys_Empty();
                                 s.UpdateStudent();
-                            }else{
-                                System.out.println("There is no Any Students on the System");
-                            }
                             break;
                         case "9":
                             addMore = false;
@@ -163,8 +149,8 @@ public class Main {
 
                 }
             } catch (Exception e) {
-                System.out.println("Invalid input. Please enter a number between 1 and 9.");
-
+                System.out.println(e.getMessage());
+                System.out.println("__________________________________");
             }
 
         }

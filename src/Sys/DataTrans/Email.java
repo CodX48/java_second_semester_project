@@ -18,14 +18,13 @@ public class Email extends DataTransfer {
 
             if (line.length == 3) {
 
-            String[] subject = line[2].split(",");
+            String[] subject = line[2].split(":");
             StringBuilder Mes = new StringBuilder();
             Mes.append("<html><body><font size=\"3\">");
             Mes.append("<p>Hello, ").append(line[1].toUpperCase()).append("<p/>\n\nYour Subject For This Semester :<br><br><div>");
-            for (String s : subject) {
-                Mes.append(s);
-                Mes.append("<br>");
-            }
+                for(int i = 0 ; i < subject.length ; i+=2){
+                    Mes.append(subject[i]).append(":").append(subject[i + 1]).append("<br>");
+                }
             Mes.append("<div/><br>");
             Mes.append("Have a Nice Day ;)");
             Mes.append("<font/><body/><html/>");
@@ -40,7 +39,7 @@ public class Email extends DataTransfer {
             Session session = Session.getInstance(prop, new Authenticator() {
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication("example@gmail.com", "************");
+                    return new PasswordAuthentication("codx207@gmail.com", "sytn xmji bnon pmls");
                 }
             });
             Scanner scanner = new Scanner(System.in);
@@ -50,7 +49,7 @@ public class Email extends DataTransfer {
 
 
                 Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress("exaple@gmail.com"));
+                message.setFrom(new InternetAddress("codx207@gmail.com"));
                 message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(temp));
                 message.setSubject("Your Subject Of This Semester");
 

@@ -1,9 +1,9 @@
-Student Name: mostafa khatab
-Student Id: 1000
+Student Name: yasine mostafa
+Student Id: 1006
 Student Subject: 
 Programming II, Id: 1400121004
 Calculus II, Id: 1400121002
+Physics II, Id: 1400121006
 Discrete Mathematics, Id: 1400121008
 Linear Algebra, Id: 1400121010
-Turkish II, Id: 5010121004
-Physics II, Id: 1400121006
+German II, Id: 5010111012
