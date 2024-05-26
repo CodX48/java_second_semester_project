@@ -21,14 +21,13 @@ public class ToFile extends DataTransfer {
 
             if (line.length == 3) {
 
-                String[] subject = line[2].split(":");
                 StringBuilder Mes = new StringBuilder();
                 Mes.append("<html><body><font size=\"3\">");
                 Mes.append("<p>Hello, ").append(line[1].toUpperCase()).append("<p/>\n\nThe Is All Your Information :<br>");
                 Mes.append("Have a Nice Day ;)");
                 Mes.append("<font/><body/><html/>");
                 try {
-                    PrintWriter file = getPrintWriter(line, subject);
+                    PrintWriter file = getPrintWriter(line);
                     file.close();
                 }catch (Exception e){
                     System.out.println(e.getMessage());
@@ -83,16 +82,12 @@ public class ToFile extends DataTransfer {
         }
     }
 
-    private static PrintWriter getPrintWriter(String[] line, String[] subject) throws FileNotFoundException {
+    private static PrintWriter getPrintWriter(String[] line) throws FileNotFoundException {
         PrintWriter file = new PrintWriter("Attached_File.txt");
         file.println("Student Name: " + line[1]);
         file.println("Student Id: " + line[0]);
         file.println("Student Subject: ");
-
-        for(int i = 0 ; i < subject.length ; i+=2){
-            file.println(subject[i] + ", Id:" + subject[i+1]);
-        }
+        file.println(line[2]);
         return file;
     }
-
 }

@@ -18,13 +18,11 @@ public class Email extends DataTransfer {
 
             if (line.length == 3) {
 
-            String[] subject = line[2].split(":");
+            String[] subject = line[2].split(",");
             StringBuilder Mes = new StringBuilder();
             Mes.append("<html><body><font size=\"3\">");
             Mes.append("<p>Hello, ").append(line[1].toUpperCase()).append("<p/>\n\nYour Subject For This Semester :<br><br><div>");
-                for(int i = 0 ; i < subject.length ; i+=2){
-                    Mes.append(subject[i]).append(":").append(subject[i + 1]).append("<br>");
-                }
+                Mes.append(line[2]);
             Mes.append("<div/><br>");
             Mes.append("Have a Nice Day ;)");
             Mes.append("<font/><body/><html/>");
@@ -74,5 +72,4 @@ public class Email extends DataTransfer {
             System.out.println("There Is No Any Student On The System. ");
         }
   }
-
 }

@@ -1,9 +1,4 @@
-Student Name: yasine mostafa
-Student Id: 1006
+Student Name: bedri chalabi
+Student Id: 1001
 Student Subject: 
-Programming II, Id: 1400121004
-Calculus II, Id: 1400121002
-Physics II, Id: 1400121006
-Discrete Mathematics, Id: 1400121008
-Linear Algebra, Id: 1400121010
-German II, Id: 5010111012
+[Programming II:1400121004, Calculus II:1400121002, Programming II:1400121004, Physics II:1400121006]

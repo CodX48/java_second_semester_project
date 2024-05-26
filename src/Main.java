@@ -40,7 +40,6 @@ public class Main {
                                 if (name.matches("[a-zA-Z ]+") && name.contains(" ")) {
                                     s = new Student(name);
                                     s.AddStudent(false);
-
                                     break;
                                 }
                                 else {
@@ -56,8 +55,8 @@ public class Main {
                                 name = scan.nextLine().trim();
                                 if ( name.matches("[a-zA-Z ]+") && name.contains(" ")) {
                                     System.out.println("___________Courses___________");
-                                    for(String sub : course.CoursesList()){
-                                        System.out.println(sub);
+                                    for(Course sub : course.CoursesList()){
+                                        System.out.println(sub.toString());
                                     }
                                     s = new Student(name, course.Enrolled_Courses());
                                     s.AddStudent(true);
@@ -72,16 +71,12 @@ public class Main {
                         case "3":
                             s = new Student();
                            s.Sys_Empty();
-                                String Student = s.searchStudentFromIdOrName();
+                                String Student = s.searchStudentFromIdOrName().toString();
                                     String[] StudentInfo = Student.split("_");
-
                             try{
-                                String[] StudentSub = StudentInfo[2].split(",");
                                 System.out.println("Student Name: " + StudentInfo[1].toUpperCase() + ", Student Id: " + StudentInfo[0]);
                                 System.out.println("\nStudent Subjects: ");
-                                for(String SInfo: StudentSub){
-                                    System.out.println(SInfo);
-                                }
+                                System.out.println(StudentInfo[2]);
                             }catch (Exception e){
                                 System.out.println("Student Name: " + StudentInfo[1].toUpperCase() + ", Student Id: " + StudentInfo[0]);
                             }
@@ -90,8 +85,7 @@ public class Main {
                         case "4":
                                 s = new Student();
                                 s.Sys_Empty();
-                                String[] id = s.searchStudentFromIdOrName().split("_");
-                                s.Delete_student_from_Id(id[0]);
+                                s.Delete_student_from_Id(s.searchStudentFromIdOrName().getIdOfStudent());
                                 System.out.println("Deleted Successfully. ");
                             break;
                         case "5":
@@ -102,13 +96,7 @@ public class Main {
                         case "6":
                             s = new Student();
                            s.Sys_Empty();
-                                String[] Sub =  s.Display_All_Student_Courses().split(":");
-                                System.out.println("Student's Subject: ");
-
-                            for(int i = 0 ; i < Sub.length ; i+=2){
-                                System.out.println(Sub[i] + ":" + Sub[i+1]);
-                            }
-
+                                System.out.println(s.Display_All_Student_Courses());
                             break;
                         case "7":
                                s = new Student();
@@ -123,12 +111,12 @@ public class Main {
                                     switch (scanner.nextLine()) {
                                         case "1":
                                             Transfer = new ToFile();
-                                            Transfer.SendData(s.searchStudentFromIdOrName());
+                                            Transfer.SendData(s.searchStudentFromIdOrName().toString());
                                             valid = false;
                                             break;
                                         case "2":
                                             Transfer = new Email();
-                                            Transfer.SendData(s.searchStudentFromIdOrName());
+                                            Transfer.SendData(s.searchStudentFromIdOrName().toString());
                                             valid = false;
                                             break;
                                         default:

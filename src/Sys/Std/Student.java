@@ -6,25 +6,35 @@ import java.util.*;
 public class Student{
     private String NameOfStudent;
     private  String IdOfStudent = "1000";
-    private ArrayList<String> courses;
+    private ArrayList<Course> courses = new ArrayList<>() ;
+
 
     public Student() {}
-
-    public Student(String nameOfStudent, ArrayList<String> courses) {
+    //this constructor for add a student and his courses
+    public Student(String nameOfStudent, ArrayList<Course> courses) {
         this.NameOfStudent = nameOfStudent;
         this.courses = courses;
         IncreaseId();
     }
+    //this constructor for add a student without courses
     public Student(String nameOfStudent) {
         this.NameOfStudent = nameOfStudent;
         IncreaseId();
     }
-    private int getTotalCharacters() {
+
+    public String getIdOfStudent(){
+        return IdOfStudent;
+    }
+    @Override
+    public String toString(){
+        return IdOfStudent + "_" + NameOfStudent + "_" + courses;
+    }
+    private int getTotalCharactersOfCourses() {
         int total = 0;
-        for (String str : courses) {
-            total += str.length();
+        for (Course str : courses) {
+            total += str.toString().length();
         }
-        return total;
+        return total + (courses.size())-1;
     }
     public void AddStudent(boolean add) {
         try {
@@ -33,14 +43,17 @@ public class Student{
             Dot.write(IdOfStudent.getBytes());
             //StudentNameLength
             WriteInBigEndianNotation(Dot,NameOfStudent.length());
+            //Student name
             Dot.write(NameOfStudent.getBytes());
-                if (add) {
-                    WriteInBigEndianNotation(Dot,getTotalCharacters() + (courses.size())-1);
-                    for(String s : courses) {
-                        Dot.write(s.getBytes());
-                        if (!s.equals(courses.getLast())) Dot.write(":".getBytes());
+            if (add) {
+                WriteInBigEndianNotation(Dot,getTotalCharactersOfCourses()); //courses length
+                    for(Course c : courses) {
+                        Dot.write(c.toString().getBytes());
+                        if (!c.equals(courses.getLast())) Dot.write(":".getBytes()); //here I check if it is the last course, so I will not add ":"
                     }
-                }
+                }else {
+                WriteInBigEndianNotation(Dot,0);
+            }
             Dot.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -51,28 +64,31 @@ public class Student{
         f.write(value & 0xFF);
     }
 
-    public ArrayList<String> Display_info() {
-        ArrayList<String> data_file = new ArrayList<>();
+    public ArrayList<Student> Display_info() {
+        ArrayList<Student> data_file = new ArrayList<>();
         try {
             FileInputStream IS = new FileInputStream("my_data.bin");
             while (IS.available() > 0){
-                StringBuilder BuildStudent = new StringBuilder();
+                Student student = new Student();
                 //Id
                 byte[] IdBytes = new byte[4];
                 IS.read(IdBytes);
-                String id = new String(IdBytes);
+                student.IdOfStudent = new String(IdBytes);
                 //name
                 byte[] NameBytes = new byte[ReadSizeOfNextString(IS)];
                 IS.read(NameBytes);
-                String name = new String(NameBytes);
-                BuildStudent.append(id).append("_").append(name);
-                //Courses
-                //NumOfCourses
-                    BuildStudent.append("_");
-                    byte[] courseByte = new byte[ReadSizeOfNextString(IS)];
-                    IS.read(courseByte);
-                    BuildStudent.append(new String(courseByte));
-                data_file.add(BuildStudent.toString());
+                student.NameOfStudent = new String(NameBytes);
+
+                    int CourseSize = ReadSizeOfNextString(IS);
+                    if(CourseSize != 0){
+                        byte[] courseByte = new byte[CourseSize];
+                        IS.read(courseByte);
+                        String[] courses = (new String(courseByte)).split(":");
+                        for (int x =0 ; x < courses.length ; x+=2){
+                            student.courses.add(new Course(courses[x],courses[x+1]));
+                        }
+                    }
+                data_file.add(student);
             }
             IS.close();
             return data_file;
@@ -84,19 +100,16 @@ public class Student{
     private static int ReadSizeOfNextString(InputStream f)throws Exception{
         int byte3 = f.read();
         int byte4 = f.read();
-        return (byte3 << 8) | (byte4 );
+        return (byte3 << 8) | (byte4);
     }
     private void IncreaseId() {
         ArrayList<String> Ids = new ArrayList<>();
         int x = 0;
         try {
-            while (x < Display_info().size()) {
-                String line = Display_info().get(x);
-                String[] data = line.split("_");
-                Ids.add(data[0]);
-                x++;
+            for(Student s : Display_info()){
+                Ids.add(s.IdOfStudent);
             }
-            x = 0;
+
             while (x < Ids.size()) {
                  int tempId = (Integer.parseInt(IdOfStudent) + x+1);
                 if(!(Ids.contains(String.valueOf(tempId)))){
@@ -109,20 +122,18 @@ public class Student{
             System.out.println(e.getMessage());
         }
     }
-    public String searchStudentFromIdOrName() throws Exception {
-        int x = 0;
+    public Student searchStudentFromIdOrName() throws Exception {
         Scanner scanner = new Scanner(System.in);
         System.out.println("________________Our List Of Student________________");
-        for (String student : Display_info()) {
-            String[] nameId = student.split("_");
-            System.out.println(nameId[0] + " : " + nameId[1]);
+        for (Student student : Display_info()) {
+
+            System.out.println(student.NameOfStudent + " : " + student.IdOfStudent);
         }
         System.out.println("________________Please Enter The Id Or Full Name________________");
         String out = scanner.nextLine();
         boolean exist = false;
-        for (String ex : Display_info()) {
-            String[] data = ex.split("_");
-            if (data[0].equals(out) || data[1].equals(out)) {
+        for (Student student : Display_info()) {
+            if (student.IdOfStudent.equals(out) || student.NameOfStudent.equals(out)) {
                 exist = true;
                 break;
             }
@@ -131,24 +142,20 @@ public class Student{
         if (exist) {
             try {
                 int id = Integer.parseInt(out);
-                while (x < Display_info().size()) {
-                    String line = Display_info().get(x);
-                    String[] info = line.split("_");
-                    if (id == Integer.parseInt(info[0])) {
+                for (Student student : Display_info()) {
+                    if (id == Integer.parseInt(student.IdOfStudent)) {
                        // scan.close(); // Close scanner here
-                        return line;
+                        return student;
                     }
-                    x++;
+
                 }
             } catch (Exception e) {
-                while (x < Display_info().size()) {
-                    String line = Display_info().get(x);
-                    String[] info = line.split("_");
-                    if (Objects.equals(out, info[1])) {
+                for (Student student : Display_info()) {
+                    if (Objects.equals(out, student.NameOfStudent)) {
                        // scan.close(); // Close scanner here
-                        return line;
+                        return student;
                     }
-                    x++;
+
                 }
             }
         } else {
@@ -156,33 +163,34 @@ public class Student{
             throw  new Exception("This Student Does Not Exist In The System.");
         }
         //scan.close(); // Close scanner here
-        return "";
+        return null;
     }
     public void Delete_student_from_Id(String Id) {
-        int x = 0;
-        ArrayList<String> NewList = Display_info();
+
+        ArrayList<Student> NewList = Display_info();
             try {
-                while (x < NewList.size()) {
-                    String line = NewList.get(x);
-                    String[] info = line.split("_");
-                    if (Id.equals(info[0])) {
-                        NewList.remove(x);
+                for (Student student : NewList) {
+                    if (Id.equals(student.IdOfStudent)) {
+                        NewList.remove(student);
                         break;
                     }
-                    x++;
+
                 }
-                x = 0;
+
                 FileOutputStream Dot = new FileOutputStream("my_data.bin");
-                while (x < NewList.size()) {
-                    String[] line = NewList.get(x).split("_");
-                    Dot.write(line[0].getBytes());
-                    WriteInBigEndianNotation(Dot,line[1].length());
-                    Dot.write(line[1].getBytes());
-                    if(line.length>2){
-                        WriteInBigEndianNotation(Dot,line[2].length());
-                        Dot.write(line[2].getBytes());
+                for (Student student : NewList) {
+                    Dot.write(student.IdOfStudent.getBytes());
+                    WriteInBigEndianNotation(Dot,student.NameOfStudent.length());
+                    Dot.write(student.NameOfStudent.getBytes());
+                    this.courses = student.courses;
+                    WriteInBigEndianNotation(Dot,getTotalCharactersOfCourses()); //courses length
+                    if(student.courses != null){
+                        for(Course c : courses) {
+                            Dot.write(c.toString().getBytes());
+                            if (!c.equals(courses.getLast())) Dot.write(":".getBytes()); //here I check if it is the last course, so I will not add ":"
+                        }
                     }
-                    x++;
+
                 }
                 Dot.close();
             } catch (Exception e) {
@@ -190,34 +198,30 @@ public class Student{
             }
     }
     public void Display_All_StudentsNames() {
-            ArrayList<String> StdInfo = Display_info();
-            int x = 0;
+            ArrayList<Student> StdInfo = Display_info();
             System.out.println("_________________Our Students_________________");
-            while (x < StdInfo.size()) {
-                String[] line = StdInfo.get(x).split("_");
-                System.out.println(line[1]);
-                x++;
+            for (Student student : StdInfo) {
+                System.out.println(student.NameOfStudent);
             }
     }
     public String Display_All_Student_Courses() throws Exception{
-            String[] line = searchStudentFromIdOrName().split("_");
-            if(line.length <= 2){
+        Student student = searchStudentFromIdOrName();
+            if(student.courses == null){
                 return "this Student does not have any Enrolled Subject.";
             }else {
-                return line[2];
+                return student.courses.toString();
             }
     }
+
     public void UpdateStudent() throws Exception{
-            ArrayList<String> Sub = new ArrayList<>();
-            String line = searchStudentFromIdOrName();
-                String[] Data = line.split("_");
-                if(Data.length == 3){ //that means he enrolled subjects
-                    String[] Subjects = Data[2].split(":");
-                    String [] name = Data[1].split(" ");
-                    System.out.println(name[0] +"'s Subject:");
-                    for(int x = 0 ; x < Subjects.length ; x+=2){
-                        Sub.add(Subjects[x] + ":" + Subjects[x+1]);
-                        System.out.println(Subjects[x] + ":" + Subjects[x+1]);
+            ArrayList<Course> Sub = new ArrayList<>();
+            Student student = searchStudentFromIdOrName();
+                if(!student.courses.isEmpty()){ //that means he enrolled subjects
+
+                    System.out.println(student.NameOfStudent +"'s Subject:");
+                    for(Course course : student.courses){
+                        Sub.add(new Course(course.getNameOfCourse(),course.getId()));
+                        System.out.println(course.getNameOfCourse()+ ":" + course.getId());
                     }
                     System.out.println("__________________________________");
                     boolean update = true;
@@ -231,37 +235,36 @@ public class Student{
                         String x = scanner.nextLine();
                         switch (x){
                             case "1":
-                                Delete_student_from_Id(Data[0]);
+                                Delete_student_from_Id(student.IdOfStudent);
                                 Sub.addAll(add_new_Sub(Sub));
-                                this.NameOfStudent = Data[1];
-                                this.IdOfStudent = Data[0];
+                                this.NameOfStudent = student.NameOfStudent;
+                                this.IdOfStudent = student.IdOfStudent;
                                 this.courses = Sub;
                                 AddStudent(!courses.isEmpty());
                                 break;
                             case "2":
-                                Delete_student_from_Id(Data[0]);
+                                Delete_student_from_Id(student.IdOfStudent);
                                 Scanner scan = new Scanner(System.in);
                                 System.out.print("Please Enter the Subject_Id For Delete From The List Above: ");
                                 String C_ID = scan.nextLine();
-                                for (String OneC : Sub){
-                                    String[] parse_Sub = OneC.split(":");
-                                    if(parse_Sub[1].equals(C_ID)){
+                                for (Course OneC : Sub){
+                                    if(OneC.getId().equals(C_ID)){
                                         Sub.remove(OneC);
                                         break;
                                     }
                                 }
                                 System.out.println("The Subject Successfully Removed.");
-                                this.NameOfStudent = Data[1];
-                                this.IdOfStudent = Data[0];
+                                this.NameOfStudent = student.NameOfStudent;
+                                this.IdOfStudent = student.IdOfStudent;
                                 this.courses = Sub;
                                 AddStudent(!courses.isEmpty());
                                 break;
                             case "3":
                                 Sub.clear();
-                                Delete_student_from_Id(Data[0]);
-                                this.NameOfStudent = Data[1];
-                                this.IdOfStudent = Data[0];
-                                AddStudent(!Sub.isEmpty());
+                                Delete_student_from_Id(student.IdOfStudent);
+                                this.NameOfStudent = student.NameOfStudent;
+                                this.IdOfStudent = student.IdOfStudent;
+                                AddStudent(!courses.isEmpty());
                                 System.out.println("All subject Have been Removed Successfully.");
                                 break;
                             case "4":
@@ -275,24 +278,34 @@ public class Student{
                 }else {
                     System.out.println("Please Enroll Some Subjects First.");
                     System.out.println("__________________________________");
-                    Delete_student_from_Id(Data[0]);
+                    Delete_student_from_Id(student.IdOfStudent);
                     Sub.addAll(add_new_Sub(Sub));
-                    this.NameOfStudent = Data[1];
-                    this.IdOfStudent = Data[0];
+                    this.NameOfStudent = student.NameOfStudent;
+                    this.IdOfStudent = student.IdOfStudent;
                     this.courses = Sub;
                     AddStudent(!courses.isEmpty());
                     System.out.println("Information Updated Successfully ;)");
                 }
     }
-    private ArrayList<String> add_new_Sub(ArrayList<String> Student_Subjects){
+    private ArrayList<Course> add_new_Sub(ArrayList<Course> Student_Subjects){
+
         Course course = new Course();
         System.out.println("Subjects Could Be Enrolled: ");
+        if(!Student_Subjects.isEmpty()){
+            for (Course sub : course.CoursesList()){
+                for(Course c : Student_Subjects){
+                    if(!Objects.equals(sub.getId(), c.getId())){
+                        System.out.println(sub);
+                    }
 
-        for (String sub : course.CoursesList()){
-            if(!(Student_Subjects).contains(sub)){
-                System.out.println(sub);
+                }
+            }
+        } else {
+            for(Course c : course.CoursesList()){
+                System.out.println(c);
             }
         }
+
         return course.Enrolled_Courses();
     }
     public void Sys_Empty()throws Exception{
@@ -302,4 +315,6 @@ public class Student{
                 throw new Exception("There is no Any Students on the System");
             }
     }
+
+
 }
