@@ -18,7 +18,6 @@ public class Email extends DataTransfer {
 
             if (line.length == 3) {
 
-            String[] subject = line[2].split(",");
             StringBuilder Mes = new StringBuilder();
             Mes.append("<html><body><font size=\"3\">");
             Mes.append("<p>Hello, ").append(line[1].toUpperCase()).append("<p/>\n\nYour Subject For This Semester :<br><br><div>");
@@ -45,7 +44,6 @@ public class Email extends DataTransfer {
             String temp = scanner.nextLine();
             try {
 
-
                 Message message = new MimeMessage(session);
                 message.setFrom(new InternetAddress("codx207@gmail.com"));
                 message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(temp));
@@ -62,12 +60,9 @@ public class Email extends DataTransfer {
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-
         } else {
                 System.out.println("this Student Does Not Have Any Information To Send. ");
             }
-
-
     }else {
             System.out.println("There Is No Any Student On The System. ");
         }

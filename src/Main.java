@@ -3,23 +3,21 @@ import Sys.DataTrans.*;
 import Sys.Std.*;
 import Sys.course.*;
 public class Main {
-
-
     public static void main(String[] args){
-
         boolean addMore = true;
         String name;
         Student s;
         Course course;
+
+        Display_menu();
+
         while (addMore) {
             Scanner scan = new Scanner(System.in);
+            System.out.print("Enter: ");
             try {
-
-                Display_menu();
-
                 if (scan.hasNextLine()) {
-                    String x = scan.nextLine();
 
+                    String x = scan.nextLine();
                     switch (x) {
                         case "1":
                             while (true) {
@@ -145,7 +143,7 @@ public class Main {
         System.out.println("7-Send Data throw Student Gmail");
         System.out.println("8-Update student information");
         System.out.println("9-Exit.");
-        System.out.print("Enter: ");
+
 
     }
 

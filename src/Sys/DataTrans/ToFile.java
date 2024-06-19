@@ -43,15 +43,13 @@ public class ToFile extends DataTransfer {
                 Session session = Session.getInstance(prop, new Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication("codx207@gmail.com", "sytn xmji bnon pmls");
+                        return new PasswordAuthentication("********@gmail.com", "**** **** **** ****");
                     }
                 });
                 Scanner scanner = new Scanner(System.in);
                 System.out.print("Hello, " + line[1] + "\nPlease Enter your Gmail: ");
                 String temp = scanner.nextLine();
                 try {
-
-
                     Message message = new MimeMessage(session);
                     message.setFrom(new InternetAddress("codx207@gmail.com"));
                     message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(temp));
@@ -71,12 +69,9 @@ public class ToFile extends DataTransfer {
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
-
             } else {
                 System.out.println("this Student Does Not Have Any Information To Send. ");
             }
-
-
         }else {
             System.out.println("There Is No Any Student On The System. ");
         }
